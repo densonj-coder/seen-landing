@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEEN — AI Confidence Coach</title>
+    <meta name="description" content="SEEN is the AI-powered confidence coach that scans your photos, delivers personalized compliments, and helps you discover your unique style with smart shopping recommendations.">
+    <meta property="og:title" content="SEEN — AI Confidence Coach">
+    <meta property="og:description" content="Snap a photo. Get compliments. Shop your style. SEEN uses AI vision to boost your confidence and help you look your best.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --purple: #6B3FA0;
+            --purple-light: #8B5FC4;
+            --purple-dark: #4A2870;
+            --gold: #D4A843;
+            --gold-light: #E8C878;
+            --bg-dark: #0D0A12;
+            --bg-card: #1A1520;
+            --bg-mid: #241E2D;
+            --text-primary: #F5F0FF;
+            --text-secondary: #9B8FB0;
+            --accent-pink: #E8A0BF;
+            --gradient-start: #6B3FA0;
+            --gradient-end: #D4A843;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Navbar ── */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 16px 0;
+            transition: background 0.3s;
+        }
+        nav.scrolled {
+            background: rgba(13, 10, 18, 0.92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(107, 63, 160, 0.15);
+        }
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, var(--purple-light), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-links { display: flex; gap: 32px; align-items: center; }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-cta {
+            background: linear-gradient(135deg, var(--purple), var(--purple-dark)) !important;
+            color: white !important;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-weight: 600 !important;
+            transition: transform 0.2s, box-shadow 0.2s !important;
+        }
+        .nav-cta:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(107, 63, 160, 0.4);
+        }
+
+        /* ── Hero ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 50% 0%, rgba(107, 63, 160, 0.15) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(212, 168, 67, 0.08) 0%, transparent 60%);
+        }
+        .hero-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 120px 24px 80px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(107, 63, 160, 0.15);
+            border: 1px solid rgba(107, 63, 160, 0.3);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--purple-light);
+            margin-bottom: 24px;
+        }
+        .hero-badge span { font-size: 16px; }
+        .hero h1 {
+            font-size: clamp(40px, 5vw, 64px);
+            font-weight: 900;
+            line-height: 1.08;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+        .hero h1 .gradient-text {
+            background: linear-gradient(135deg, var(--purple-light), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 36px;
+            max-width: 480px;
+        }
+        .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+            color: white;
+            padding: 16px 32px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(107, 63, 160, 0.4);
+        }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            color: var(--text-primary);
+            padding: 16px 32px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1.5px solid rgba(107, 63, 160, 0.4);
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .btn-secondary:hover {
+            border-color: var(--purple-light);
+            background: rgba(107, 63, 160, 0.08);
+        }
+
+        /* Phone mockup */
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+        .phone-frame {
+            width: 280px;
+            height: 560px;
+            background: var(--bg-card);
+            border-radius: 40px;
+            border: 3px solid rgba(107, 63, 160, 0.3);
+            position: relative;
+            overflow: hidden;
+            box-shadow:
+                0 0 60px rgba(107, 63, 160, 0.15),
+                0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 28px;
+            background: var(--bg-dark);
+            border-radius: 0 0 18px 18px;
+            z-index: 2;
+        }
+        .phone-screen {
+            padding: 40px 20px 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(180deg, var(--bg-dark), var(--bg-card));
+        }
+        .phone-screen .app-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--purple), var(--gold));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+        .phone-screen h3 {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .phone-screen p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        .phone-compliment {
+            background: rgba(107, 63, 160, 0.12);
+            border: 1px solid rgba(107, 63, 160, 0.25);
+            padding: 14px 16px;
+            border-radius: 14px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-primary);
+            text-align: left;
+            margin-bottom: 12px;
+        }
+        .phone-tags { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+        .phone-tag {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(212, 168, 67, 0.15);
+            color: var(--gold-light);
+        }
+        .glow-orb {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        .glow-orb.purple { background: var(--purple); top: -80px; right: -60px; }
+        .glow-orb.gold { background: var(--gold); bottom: -60px; left: -40px; opacity: 0.15; }
+
+        /* ── Features ── */
+        .features {
+            padding: 100px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 16px;
+        }
+        .features h2 {
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+        .features > p {
+            font-size: 17px;
+            color: var(--text-secondary);
+            max-width: 560px;
+            line-height: 1.6;
+            margin-bottom: 56px;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(107, 63, 160, 0.1);
+            border-radius: 20px;
+            padding: 32px 28px;
+            transition: transform 0.25s, border-color 0.25s;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(107, 63, 160, 0.3);
+        }
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        .feature-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ── How It Works ── */
+        .how-it-works {
+            padding: 100px 24px;
+            background: linear-gradient(180deg, transparent, rgba(107, 63, 160, 0.03), transparent);
+        }
+        .how-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .how-inner h2 {
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 800;
+            margin-bottom: 56px;
+        }
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+        .step { text-align: center; }
+        .step-number {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--purple), var(--gold));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 800;
+            margin: 0 auto 20px;
+        }
+        .step h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .step p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        /* ── Social Proof ── */
+        .social-proof {
+            padding: 80px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .proof-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            text-align: center;
+        }
+        .proof-item h3 {
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--purple-light), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .proof-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* ── CTA ── */
+        .cta {
+            padding: 100px 24px;
+            text-align: center;
+        }
+        .cta-card {
+            max-width: 720px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(107, 63, 160, 0.12), rgba(212, 168, 67, 0.06));
+            border: 1px solid rgba(107, 63, 160, 0.2);
+            border-radius: 28px;
+            padding: 64px 40px;
+        }
+        .cta-card h2 {
+            font-size: clamp(28px, 3.5vw, 40px);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+        .cta-card p {
+            font-size: 17px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        /* ── Footer ── */
+        footer {
+            padding: 48px 24px;
+            border-top: 1px solid rgba(107, 63, 160, 0.1);
+        }
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-left .logo { font-size: 20px; margin-bottom: 8px; }
+        .footer-left p { font-size: 13px; color: var(--text-secondary); }
+        .footer-links { display: flex; gap: 24px; }
+        .footer-links a {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover { color: var(--text-primary); }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .hero-inner { grid-template-columns: 1fr; text-align: center; padding-top: 100px; }
+            .hero p { margin-left: auto; margin-right: auto; }
+            .hero-buttons { justify-content: center; }
+            .hero-visual { margin-top: 40px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .steps { grid-template-columns: 1fr; gap: 32px; }
+            .proof-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+            .nav-links { display: none; }
+            .footer-inner { flex-direction: column; gap: 24px; text-align: center; }
+        }
+
+        /* ── Animations ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate { animation: fadeUp 0.6s ease-out forwards; }
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav id="navbar">
+        <div class="nav-inner">
+            <div class="logo">SEEN</div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#download" class="nav-cta">Download</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-inner">
+            <div class="animate">
+                <div class="hero-badge">
+                    <span>&#x2728;</span> AI-Powered Confidence Coach
+                </div>
+                <h1>
+                    See yourself<br>
+                    the way <span class="gradient-text">others do.</span>
+                </h1>
+                <p>
+                    SEEN uses AI vision to analyze your photos, deliver personalized compliments,
+                    and help you discover your best style with smart shopping recommendations.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#download" class="btn-primary">
+                        &#xF8FF; Download for iOS
+                    </a>
+                    <a href="#features" class="btn-secondary">
+                        Learn More &#x2192;
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual animate delay-2">
+                <div class="glow-orb purple"></div>
+                <div class="glow-orb gold"></div>
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <div class="app-icon">&#x1F440;</div>
+                        <h3>You look amazing!</h3>
+                        <p>AI-generated just for you</p>
+                        <div class="phone-compliment">
+                            &#x201C;Your style sense is impeccable &#x2014; that color palette works perfectly with your complexion and the fit is on point.&#x201D;
+                        </div>
+                        <div class="phone-tags">
+                            <span class="phone-tag">Style: 9.5/10</span>
+                            <span class="phone-tag">Fit: Perfect</span>
+                            <span class="phone-tag">Vibe: Icon</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+        <div class="section-label">&#x2B50; Features</div>
+        <h2>Everything you need to<br>look and feel your best</h2>
+        <p>From AI-powered style analysis to shoppable recommendations, SEEN is your all-in-one confidence toolkit.</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F4F8;</div>
+                <h3>AI Photo Analysis</h3>
+                <p>Snap a selfie and get instant, personalized compliments powered by Claude AI vision technology.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F6CD;</div>
+                <h3>Shop This Look</h3>
+                <p>See something you love? Find matching products from real retailers and shop directly through the app.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F45F;</div>
+                <h3>Sneaker Explorer</h3>
+                <p>Browse trending releases, compare resale prices across StockX and GOAT, and cop your grails.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x2728;</div>
+                <h3>Glow Routine</h3>
+                <p>Build a personalized skincare and grooming routine with daily checklists and product recommendations.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F454;</div>
+                <h3>Kibbe Style System</h3>
+                <p>Discover your body type through an interactive quiz and get tailored fashion recommendations.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F324;</div>
+                <h3>Weather Style</h3>
+                <p>Get outfit suggestions based on your local weather so you always dress right for the day.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="how-inner">
+            <div class="section-label">&#x1F680; How It Works</div>
+            <h2>Three steps to confidence</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Snap a Photo</h3>
+                    <p>Take a selfie or choose from your camera roll. SEEN works with any photo of you.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Get Your Analysis</h3>
+                    <p>Our AI analyzes your style, fit, and vibe to deliver personalized compliments and recommendations.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Shop & Glow Up</h3>
+                    <p>Browse curated product matches, shop from top retailers, and level up your look with confidence.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="social-proof">
+        <div class="proof-grid">
+            <div class="proof-item">
+                <h3>50+</h3>
+                <p>AI-Powered Features</p>
+            </div>
+            <div class="proof-item">
+                <h3>1,400+</h3>
+                <p>Shoppable Retailers</p>
+            </div>
+            <div class="proof-item">
+                <h3>13</h3>
+                <p>Kibbe Body Types</p>
+            </div>
+            <div class="proof-item">
+                <h3>24/7</h3>
+                <p>Confidence Boost</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta" id="download">
+        <div class="cta-card">
+            <h2>Ready to be <span class="gradient-text">SEEN</span>?</h2>
+            <p>Download the app and start your journey to unshakeable confidence. Available on iOS.</p>
+            <a href="#" class="btn-primary" id="app-store-btn">
+                &#xF8FF; Download on the App Store
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-left">
+                <div class="logo">SEEN</div>
+                <p>&copy; 2026 SEEN App. All rights reserved.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="mailto:densonj@hotmail.com">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        const nav = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', window.scrollY > 40);
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                const target = document.querySelector(a.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+</body>
+</html>
